@@ -18,54 +18,54 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ciandt.olympics.model.Country;
+import com.ciandt.olympics.model.Modality;
 import com.ciandt.olympics.response.Response;
-import com.ciandt.olympics.services.CountryService;
+import com.ciandt.olympics.services.ModalityService;
 
 @RestController
-@RequestMapping("/api/countries")
-public class CountryController {
+@RequestMapping("/api/modalities")
+public class ModalityController {
 	
 	@Autowired
-	private CountryService countryService;
+	private ModalityService modalityService;
 	
-	private final static Logger logger = Logger.getLogger(CountryController.class);
+	private final static Logger logger = Logger.getLogger(ModalityController.class);
 	
 	@GetMapping
-	public ResponseEntity<Response<List<Country>>> findAll() {
-		logger.info("GET: find all countries...");
+	public ResponseEntity<Response<List<Modality>>> findAll() {
+		logger.info("GET: find all modalities...");
 		
-		Response<List<Country>> response = new Response<List<Country>>();
+		Response<List<Modality>> response = new Response<List<Modality>>();
 
-		List<Country> countries = countryService.findAll();
-		if (countries == null || countries.isEmpty()) {
+		List<Modality> modalities = modalityService.findAll();
+		if (modalities == null || modalities.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
-		response.setData(countries);
+		response.setData(modalities);
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@GetMapping("{code}")
-	public ResponseEntity<Response<Country>> findByCode(@PathVariable("code") String code) {
-		logger.info("GET/{code}: find one country by country code: " + code);
+	@GetMapping("{id}")
+	public ResponseEntity<Response<Modality>> findById(@PathVariable("id") Long id) {
+		logger.info("GET/{id}: find one modality by modality id: " + id);
 		
-		Response<Country> response = new Response<Country>();
+		Response<Modality> response = new Response<Modality>();
 
-		Country country = countryService.findByCode(code);
-		if (country == null) {
-			response.getErrors().add("Country code not found");
+		Modality modality = modalityService.findById(id);
+		if (modality == null) {
+			response.getErrors().add("Modality id not found");
 			return ResponseEntity.badRequest().body(response);
 		}
-		response.setData(country);
+		response.setData(modality);
 		return ResponseEntity.ok(response);
 	}
 	
 	@PostMapping
-	public ResponseEntity<Response<Country>> save(@Valid @RequestBody Country country, BindingResult result) {
-		logger.info("POST: save one new country...");
+	public ResponseEntity<Response<Modality>> save(@Valid @RequestBody Modality modality, BindingResult result) {
+		logger.info("POST: save one new modality...");
 		
-		Response<Country> response = new Response<Country>();
+		Response<Modality> response = new Response<Modality>();
 		
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -73,7 +73,7 @@ public class CountryController {
 		}
 		
 		try {
-			response.setData(countryService.save(country));
+			response.setData(modalityService.save(modality));
 			return ResponseEntity.ok(response);
 		} catch (DataIntegrityViolationException e) {
 			response.getErrors().add(e.getMostSpecificCause().getMessage());
@@ -84,11 +84,11 @@ public class CountryController {
 		}
 	}
 	
-	@PutMapping("{code}")
-	public ResponseEntity<Response<Country>> updateByCode(@PathVariable("code") String code, @Valid @RequestBody Country country, BindingResult result) {
-		logger.info("GET/{code}: find one country by country code: " + code);
+	@PutMapping("{id}")
+	public ResponseEntity<Response<Modality>> updateById(@PathVariable("id") Long id, @Valid @RequestBody Modality modality, BindingResult result) {
+		logger.info("GET/{id}: find one modality by modality id: " + id);
 		
-		Response<Country> response = new Response<Country>();
+		Response<Modality> response = new Response<Modality>();
 
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -96,15 +96,14 @@ public class CountryController {
 		}
 		
 		try {
-			Country updCountry = countryService.findByCode(code);
-			if (updCountry == null) {
-				response.getErrors().add("Country code not found");
+			Modality updModality = modalityService.findById(id);
+			if (updModality == null) {
+				response.getErrors().add("Modality id not found");
 				return ResponseEntity.badRequest().body(response);
 			}
 			
-			updCountry.setCode(country.getCode());
-			updCountry.setName(country.getName());
-			response.setData(countryService.save(updCountry));			
+			updModality.setName(modality.getName());
+			response.setData(modalityService.save(updModality));			
 			return ResponseEntity.ok(response);
 			
 		} catch (DataIntegrityViolationException e) {
@@ -116,14 +115,14 @@ public class CountryController {
 		}
 	}
 	
-	@DeleteMapping("{code}")
-	public ResponseEntity<Response<Country>> deleteByCode(@PathVariable("code") String code) {
-		logger.info("DELETE/{code}: delete one country by country code: " + code);
+	@DeleteMapping("{id}")
+	public ResponseEntity<Response<Modality>> deleteById(@PathVariable("id") Long id) {
+		logger.info("DELETE/{id}: delete one modality by modality id: " + id);
 		
-		Response<Country> response = new Response<Country>();
+		Response<Modality> response = new Response<Modality>();
 
 		try {
-			boolean deleted = countryService.deleteByCode(code);
+			boolean deleted = modalityService.deleteById(id);
 			if (!deleted) {
 				return ResponseEntity.notFound().build();
 			}
