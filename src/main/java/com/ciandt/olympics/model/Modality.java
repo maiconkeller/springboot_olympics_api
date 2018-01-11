@@ -23,8 +23,11 @@ public class Modality {
 
 	public Modality() { }
 	
+	public Modality(Long id) {
+		this.id = id;
+	}
+	
 	public Modality(Long id, String name) {
-		super();
 		this.id = id;
 		this.name = name;
 	}

@@ -66,6 +66,19 @@ public class Competition {
 	private Phase phase;
 
 	public Competition() { }
+	
+	public Competition(Long modalityId, Long localId, LocalDate date, LocalTime timeStart, LocalTime timeEnd,
+			Long countryId1, Long countryId2, Phase phase) {
+		super();
+		this.modality = new Modality(modalityId);
+		this.local = new Local(localId);
+		this.date = date;
+		this.timeStart = timeStart;
+		this.timeEnd = timeEnd;
+		this.country1 = new Country(countryId1);
+		this.country2 = new Country(countryId2);
+		this.phase = phase;
+	}
 
 	public Long getId() {
 		return id;

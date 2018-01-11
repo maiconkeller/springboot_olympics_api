@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ciandt.olympics.dto.CompetitionDto;
 import com.ciandt.olympics.model.Competition;
 import com.ciandt.olympics.response.Response;
 import com.ciandt.olympics.services.CompetitionService;
@@ -51,13 +52,10 @@ public class CompetitionController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<Response<Competition>> save(@Valid @RequestBody Competition competition, BindingResult result) {
+	public ResponseEntity<Response<Competition>> save(@Valid @RequestBody CompetitionDto competitionDto, BindingResult result) {
 		logger.info("POST: save one new competition...");
 		
 		Response<Competition> response = new Response<Competition>();
-		
-		// aditional competition validates
-		//CompetitionValidator.validate(competition, result);
 		
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -65,7 +63,7 @@ public class CompetitionController {
 		}
 		
 		try {
-			response.setData(competitionService.save(competition));
+			response.setData(competitionService.save(this.dtoToCompetition(competitionDto)));
 			return ResponseEntity.ok(response);
 		} catch (DataIntegrityViolationException e) {
 			response.getErrors().add(e.getMostSpecificCause().getMessage());
@@ -75,6 +73,12 @@ public class CompetitionController {
 			response.getErrors().add(ex.getCause()!=null?ex.getCause().getLocalizedMessage() : ex.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
+	}
+
+	private Competition dtoToCompetition(CompetitionDto dto) {
+		Competition competition = new Competition(dto.getModalityId(), dto.getLocalId(), dto.getDate(), dto.getTimeStart(), 
+				dto.getTimeEnd(), dto.getCountryId1(), dto.getCountryId2(), dto.getPhase());
+		return competition;
 	}
 	
 	

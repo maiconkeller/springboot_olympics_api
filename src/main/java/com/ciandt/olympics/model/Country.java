@@ -28,13 +28,17 @@ public class Country {
 	private String code;
 
 	public Country() { }
+
+	public Country(Long id) {
+		this.id = id;
+	}
 	
 	public Country(Long id, String name, String code) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.code = code;
 	}
+
 
 	public Long getId() {
 		return id;

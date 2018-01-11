@@ -23,8 +23,11 @@ public class Local {
 
 	public Local() { }
 	
+	public Local(Long id) {
+		this.id = id;
+	}
+	
 	public Local(Long id, String name) {
-		super();
 		this.id = id;
 		this.name = name;
 	}
