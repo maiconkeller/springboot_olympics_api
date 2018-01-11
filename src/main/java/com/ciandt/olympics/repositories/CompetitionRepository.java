@@ -1,5 +1,7 @@
 package com.ciandt.olympics.repositories;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ciandt.olympics.model.Competition;
+import com.ciandt.olympics.model.Local;
 import com.ciandt.olympics.model.Modality;
 
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
@@ -22,5 +25,12 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
 	@Transactional
 	@Query("select c from Competition c where c.modality=:modality order by c.date, c.timeStart")
 	List<Competition> findByModality(@Param("modality") Modality modality);
+
+	@Transactional
+	int countByLocalAndDate(Local local, LocalDate date);
+
+	@Transactional
+	boolean existsByModalityAndLocalAndDateAndTimeStartLessThanEqualAndTimeEndGreaterThanEqual(Modality modality, Local local, LocalDate date, LocalTime timeEnd,
+			LocalTime timeStart);
 	
 }

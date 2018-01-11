@@ -56,6 +56,9 @@ public class CompetitionController {
 		
 		Response<Competition> response = new Response<Competition>();
 		
+		// aditional competition validates
+		//CompetitionValidator.validate(competition, result);
+		
 		if (result.hasErrors()) {
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
@@ -68,7 +71,8 @@ public class CompetitionController {
 			response.getErrors().add(e.getMostSpecificCause().getMessage());
 			return ResponseEntity.badRequest().body(response);
 		} catch (Exception ex) {
-			response.getErrors().add(ex.getCause().getMessage());
+			logger.error(ex);
+			response.getErrors().add(ex.getCause()!=null?ex.getCause().getLocalizedMessage() : ex.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
