@@ -3,10 +3,16 @@ package com.ciandt.olympics.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +48,29 @@ public class CompetitionController {
 		response.setData(competitions);
 		
 		return ResponseEntity.ok(response);
+	}
+	
+	@PostMapping
+	public ResponseEntity<Response<Competition>> save(@Valid @RequestBody Competition competition, BindingResult result) {
+		logger.info("POST: save one new competition...");
+		
+		Response<Competition> response = new Response<Competition>();
+		
+		if (result.hasErrors()) {
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		try {
+			response.setData(competitionService.save(competition));
+			return ResponseEntity.ok(response);
+		} catch (DataIntegrityViolationException e) {
+			response.getErrors().add(e.getMostSpecificCause().getMessage());
+			return ResponseEntity.badRequest().body(response);
+		} catch (Exception ex) {
+			response.getErrors().add(ex.getCause().getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 	
 	

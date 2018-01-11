@@ -3,6 +3,7 @@ package com.ciandt.olympics.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.ciandt.olympics.model.enums.Phase;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Entity
 @Table(name="competitions")
@@ -26,34 +27,36 @@ public class Competition {
 	private Long id;
 
 	@ManyToOne
-	@JsonIgnore
 	@JoinColumn(nullable=false, name="modality_id")
 	@NotNull(message="Modality is required")
 	private Modality modality;
 	
 	@ManyToOne
-	@JsonIgnore
 	@JoinColumn(nullable=false, name="local_id")
 	@NotNull(message="Local is required")
 	private Local local;
 	
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	@NotNull(message="Date is required")
+	@Column(columnDefinition="DATE")
 	private LocalDate date;
 	
+	@JsonFormat(pattern = "HH:mm")
 	@NotNull(message="Start Time is required")
+	@Column(columnDefinition="TIME")
 	private LocalTime timeStart;
 	
+	@JsonFormat(pattern = "HH:mm")
 	@NotNull(message="End Time is required")
+	@Column(columnDefinition="TIME")
 	private LocalTime timeEnd;
 	
 	@ManyToOne
-	@JsonIgnore
 	@JoinColumn(nullable=false, name="country1_id")
 	@NotNull(message="Country1 is required")
 	private Country country1;
 	
 	@ManyToOne
-	@JsonIgnore
 	@JoinColumn(nullable=false, name="country2_id")
 	@NotNull(message="Country2 is required")
 	private Country country2;

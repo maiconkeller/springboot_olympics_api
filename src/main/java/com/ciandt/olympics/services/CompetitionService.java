@@ -24,4 +24,8 @@ public class CompetitionService {
 		return competitionRepository.findAll();
 	}
 
+	public Competition save(Competition competition) {
+		return competitionRepository.save(competition);
+	}
+
 }
